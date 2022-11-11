@@ -1,4 +1,5 @@
 project(YAKL C CXX Fortran)
+cmake_minimum_required(VERSION 3.0)
 
 if ("${YAKL_ARCH}" STREQUAL "CUDA")
   enable_language(CUDA)
@@ -34,9 +35,14 @@ set_source_files_properties(${YAKL_F90_SOURCE} PROPERTIES COMPILE_FLAGS "${YAKL_
 add_library(yakl STATIC ${YAKL_SOURCE})
 set_property(TARGET yakl PROPERTY CXX_STANDARD 17)
 
-target_include_directories(yakl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(yakl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/extensions)
-target_include_directories(yakl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
+target_include_directories(yakl PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external>
+  $<INSTALL_INTERFACE:include>)
+
+target_include_directories(yakl PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/extensions>
+  $<INSTALL_INTERFACE:include/extensions>)
 
 if ("${YAKL_ARCH}" STREQUAL "CUDA")
   set_target_properties(yakl PROPERTIES LINKER_LANGUAGE CUDA CUDA_SEPARABLE_COMPILATION OFF CUDA_RESOLVE_DEVICE_SYMBOLS ON)
@@ -58,5 +64,10 @@ endif()
 if ("${YAKL_ARCH}" STREQUAL "OPENMP")
   target_link_libraries(yakl "${YAKL_OPENMP_FLAGS}")
 endif()
+
+install(TARGETS yakl)
+install(DIRECTORY src/ external/ DESTINATION include
+          FILES_MATCHING PATTERN "*.h")
+
 
 
