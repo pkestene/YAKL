@@ -47,6 +47,9 @@ target_include_directories(yakl PUBLIC
 if ("${YAKL_ARCH}" STREQUAL "CUDA")
   set_target_properties(yakl PROPERTIES LINKER_LANGUAGE CUDA CUDA_SEPARABLE_COMPILATION OFF CUDA_RESOLVE_DEVICE_SYMBOLS ON)
   target_link_libraries(yakl cufft)
+  if (${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.18)
+    set_property(TARGET yakl PROPERTY CUDA_ARCHITECTURES OFF)
+  endif()
 endif()
 
 if ("${YAKL_ARCH}" STREQUAL "HIP")
@@ -68,6 +71,6 @@ endif()
 install(TARGETS yakl)
 install(DIRECTORY src/ external/ DESTINATION include
           FILES_MATCHING PATTERN "*.h")
-
-
+install(CODE "file(WRITE ${CMAKE_INSTALL_PREFIX}/yakl_variables.cmake \"set(YAKL_COMPILER_FLAGS ${YAKL_COMPILER_FLAGS})\nset(YAKL_ARCH ${YAKL_ARCH})\n\")" )
+install(CODE "file(WRITE ${CMAKE_INSTALL_PREFIX}/yakl_variables.make \"YAKL_COMPILER_FLAGS := ${YAKL_COMPILER_FLAGS}\nYAKL_ARCH := ${YAKL_ARCH}\n\")" )
 
