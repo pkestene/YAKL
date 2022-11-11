@@ -69,8 +69,8 @@ if ("${YAKL_ARCH}" STREQUAL "OPENMP")
 endif()
 
 install(TARGETS yakl)
-install(DIRECTORY src/ external/ DESTINATION include
-          FILES_MATCHING PATTERN "*.h")
-install(CODE "file(WRITE ${CMAKE_INSTALL_PREFIX}/yakl_variables.cmake \"set(YAKL_COMPILER_FLAGS ${YAKL_COMPILER_FLAGS})\nset(YAKL_ARCH ${YAKL_ARCH})\n\")" )
+install(DIRECTORY src/ external/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/gator_mod.mod DESTINATION include)
+install(CODE "file(WRITE ${CMAKE_INSTALL_PREFIX}/yakl_variables.cmake \"set(YAKL_COMPILER_FLAGS \\\"${YAKL_COMPILER_FLAGS}\\\")\nset(YAKL_ARCH \\\"${YAKL_ARCH}\\\")\n\")" )
 install(CODE "file(WRITE ${CMAKE_INSTALL_PREFIX}/yakl_variables.make \"YAKL_COMPILER_FLAGS := ${YAKL_COMPILER_FLAGS}\nYAKL_ARCH := ${YAKL_ARCH}\n\")" )
 
